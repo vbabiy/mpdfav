@@ -35,34 +35,29 @@ const (
 var ErrInvalidRatingCode = errors.New("ratings: invalid rating code")
 
 func rateSong(songInfo *Info, rateMsg string, mpdc *MPDClient) (int, error) {
-	// fail fast if the rateMsg is invalid
-	var val int
+	var rating string
 	switch rateMsg {
-	case "1", "2", "3", "4", "5":
-		stars, err := strconv.Atoi(rateMsg)
-		if err == nil {
-			val = stars
-		}
-	case "+":
-		fallthrough
+	case "0", "1", "2", "3", "4", "5":
+		rating = rateMsg
 	case "like":
-		val = 1
-	case "-":
-		fallthrough
+		rating = "5"
 	case "dislike":
-		val = -1
+		rating = "0"
 	default:
-		val = 0
-	}
-	if val == 0 {
-		return -1, ErrInvalidRatingCode
+		rating = "0"
 	}
 
-	newval, err := AdjustIntStickerBy(mpdc, RatingSticker, (*songInfo)["file"], val)
+	err := mpdc.StickerSet(
+		StickerSongType,
+		(*songInfo)["file"],
+		RatingSticker,
+		rating,
+	)
+
 	if err != nil {
-		return -1, err
+		return "-1", err
 	}
-	return newval, err
+	return rating, err
 }
 
 func ListenRatings(mpdc *MPDClient, channels []chan SongSticker, quit chan bool) {
@@ -134,7 +129,7 @@ func ListenRatings(mpdc *MPDClient, channels []chan SongSticker, quit chan bool)
 			if err == nil {
 				if rating, err := rateSong(songInfo, channelMessage.Message, mpdc); err == nil {
 					clientsSentRating = append(clientsSentRating, thisClientId)
-					log.Printf("Ratings: %s rating=%d\n", (*songInfo)["Title"], rating)
+					log.Printf("Ratings: %s rating=%s\n", (*songInfo)["Title"], rating)
 					songSticker := SongSticker{(*songInfo)["file"], RatingSticker, strconv.Itoa(rating)}
 					for _, channel := range channels {
 						c := channel
