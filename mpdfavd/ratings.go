@@ -122,13 +122,13 @@ func ListenRatings(mpdc *MPDClient, channels []chan SongSticker, quit chan bool)
 
 			// FIXME find a way to Uidentify a client submitting a rating
 			thisClientId := "0"
-			clientExists := false
-			for _, clientId := range clientsSentRating {
-				if thisClientId == clientId {
-					clientExists = true
-					break
-				}
-			}
+			// clientExists := false
+			// for _, clientId := range thisClientId {
+			// 	if thisClientId == clientId {
+			// 		clientExists = true
+			// 		break
+			// 	}
+			// }
 			// if !clientExists {
 			songInfo, err := mpdc.CurrentSong()
 			if err == nil {
