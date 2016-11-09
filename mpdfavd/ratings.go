@@ -34,7 +34,7 @@ const (
 
 var ErrInvalidRatingCode = errors.New("ratings: invalid rating code")
 
-func rateSong(songInfo *Info, rateMsg string, mpdc *MPDClient) (int, error) {
+func rateSong(songInfo *Info, rateMsg string, mpdc *MPDClient) (string, error) {
 	var rating string
 	switch rateMsg {
 	case "0", "1", "2", "3", "4", "5":
