@@ -21,7 +21,7 @@ package main
 
 import (
 	"errors"
-	. "github.com/anddon/mpdclient"
+	. "github.com/vincent-petithory/mpdclient"
 	. "github.com/anddon/mpdfav"
 	"log"
 )
