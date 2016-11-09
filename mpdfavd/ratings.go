@@ -21,10 +21,9 @@ package main
 
 import (
 	"errors"
-	. "github.com/vincent-petithory/mpdclient"
-	. "github.com/vincent-petithory/mpdfav"
+	. "github.com/anddon/mpdclient"
+	. "github.com/anddon/mpdfav"
 	"log"
-	"strconv"
 )
 
 const (
