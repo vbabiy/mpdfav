@@ -38,6 +38,8 @@ func rateSong(songInfo *Info, rateMsg string, mpdc *MPDClient) (int, error) {
 	// fail fast if the rateMsg is invalid
 	var val int
 	switch rateMsg {
+	case "1", "2", "3", "4", "5":
+		val = strconv.ParseInt(rateMsg)
 	case "+":
 		fallthrough
 	case "like":
