@@ -130,7 +130,7 @@ func ListenRatings(mpdc *MPDClient, channels []chan SongSticker, quit chan bool)
 				if rating, err := rateSong(songInfo, channelMessage.Message, mpdc); err == nil {
 					clientsSentRating = append(clientsSentRating, thisClientId)
 					log.Printf("Ratings: %s rating=%s\n", (*songInfo)["Title"], rating)
-					songSticker := SongSticker{(*songInfo)["file"], RatingSticker, strconv.Itoa(rating)}
+					songSticker := SongSticker{(*songInfo)["file"], RatingSticker, rating}
 					for _, channel := range channels {
 						c := channel
 						go func() {
