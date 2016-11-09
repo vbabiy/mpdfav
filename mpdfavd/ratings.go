@@ -80,9 +80,6 @@ func ListenRatings(mpdc *MPDClient, channels []chan SongSticker, quit chan bool)
 	if err != nil {
 		log.Panic(err)
 	}
-	currentSongId := (*statusInfo)["songid"]
-
-	clientsSentRating := make([]string, 0)
 
 	msgsCh := make(chan ChannelMessage)
 	playerCh := make(chan Info)
