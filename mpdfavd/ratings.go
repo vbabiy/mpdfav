@@ -76,6 +76,14 @@ func ListenRatings(mpdc *MPDClient, channels []chan SongSticker, quit chan bool)
 		log.Panic(err)
 	}
 
+	statusInfo, err := mpdc.Status()
+	if err != nil {
+		log.Panic(err)
+	}
+	currentSongId := (*statusInfo)["songid"]
+
+	clientsSentRating := make([]string, 0)
+
 	msgsCh := make(chan ChannelMessage)
 	playerCh := make(chan Info)
 
@@ -112,9 +120,20 @@ func ListenRatings(mpdc *MPDClient, channels []chan SongSticker, quit chan bool)
 				break
 			}
 
+			// FIXME find a way to Uidentify a client submitting a rating
+			thisClientId := "0"
+			clientExists := false
+			for _, clientId := range clientsSentRating {
+				if thisClientId == clientId {
+					clientExists = true
+					break
+				}
+			}
+			// if !clientExists {
 			songInfo, err := mpdc.CurrentSong()
 			if err == nil {
 				if rating, err := rateSong(songInfo, channelMessage.Message, mpdc); err == nil {
+					clientsSentRating = append(clientsSentRating, thisClientId)
 					log.Printf("Ratings: %s rating=%d\n", (*songInfo)["Title"], rating)
 					songSticker := SongSticker{(*songInfo)["file"], RatingSticker, strconv.Itoa(rating)}
 					for _, channel := range channels {
@@ -131,7 +150,13 @@ func ListenRatings(mpdc *MPDClient, channels []chan SongSticker, quit chan bool)
 			} else {
 				log.Panic(err)
 			}
-
+			// } else {
+			// 	log.Printf("Client %s already rated\n", thisClientId)
+			// }
+		case statusInfo := <-playerCh:
+			if currentSongId != statusInfo["songid"] {
+				clientsSentRating = make([]string, 0)
+			}
 		case <-quit:
 			return
 		}
