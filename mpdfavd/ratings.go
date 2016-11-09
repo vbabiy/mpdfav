@@ -39,7 +39,10 @@ func rateSong(songInfo *Info, rateMsg string, mpdc *MPDClient) (int, error) {
 	var val int
 	switch rateMsg {
 	case "1", "2", "3", "4", "5":
-		val = strconv.Atoi(rateMsg)
+		val, err := strconv.Atoi(rateMsg)
+		if err != nil {
+			val = 0
+		}
 	case "+":
 		fallthrough
 	case "like":
